@@ -1,17 +1,27 @@
-﻿
-namespace Notification.Notification.ValueObjects;
+﻿using Notification.Notification.Entities;
+using Notification.Notification.Repositories;
+using Notification.Notification.ValueObjects;
 
-public class RequiredText
+namespace Notification.Notification.UseCases;
+
+public class CreateNotificationUseCase
 {
-    public string Value { get; private set; }
+    private readonly NotificationRepository _repository;
 
-    public RequiredText(string value)
+    public CreateNotificationUseCase(NotificationRepository repository)
     {
-        if (string.IsNullOrEmpty(value))
-        {
-            throw new ArgumentNullException("value");
-        }
+        _repository = repository;
+    }
 
-        Value = value;
+    public Notification Execute(string title, string description)
+    {
+        var notification = new Notification(
+            new RequiredText(title),
+            new RequiredText(description)
+        );
+
+        _repository.Save(notification);
+
+        return notification;
     }
 }
